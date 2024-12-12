@@ -1,59 +1,33 @@
 <?php
-require_once 'config.php';
+require_once 'db_connection.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Inventory Management Dashboard</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            text-align: center;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 50px;
-        }
-        .dashboard-item {
-            border: 1px solid #ddd;
-            padding: 20px;
-            text-decoration: none;
-            color: #333;
-            background-color: #f4f4f4;
-            transition: background-color 0.3s ease;
-        }
-        .dashboard-item:hover {
-            background-color: #e0e0e0;
-        }
-        h1 {
-            color: #333;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Inventory Management System</h1>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Inventory Management System</h1>
 
-    <div class="dashboard-grid">
-        <a href="inventory.php" class="dashboard-item">
-            <h2>Inventory</h2>
-            <p>Manage Product Inventory</p>
-        </a>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="inventory.php" class="dashboard-item bg-white shadow-md rounded-lg p-6 text-center transition-transform transform hover:scale-105">
+                <h2 class="text-xl font-semibold text-gray-800">Inventory</h2>
+                <p class="text-gray-600">Manage Product Inventory</p>
+            </a>
 
-        <a href="vendor.php" class="dashboard-item">
-            <h2>Vendors</h2>
-            <p>Manage Vendor Information</p>
-        </a>
+            <a href="vendor.php" class="dashboard-item bg-white shadow-md rounded-lg p-6 text-center transition-transform transform hover:scale-105">
+                <h2 class="text-xl font-semibold text-gray-800">Vendors</h2>
+                <p class="text-gray-600">Manage Vendor Information</p>
+            </a>
 
-        <a href="storage.php" class="dashboard-item">
-            <h2>Storage</h2>
-            <p>Manage Storage Locations</p>
-        </a>
+            <a href="storage.php" class="dashboard-item bg-white shadow-md rounded-lg p-6 text-center transition-transform transform hover:scale-105">
+                <h2 class="text-xl font-semibold text-gray-800">Storage</h2>
+                <p class="text-gray-600">Manage Storage Locations</p>
+            </a>
+        </div>
     </div>
 </body>
 </html>

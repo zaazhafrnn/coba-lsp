@@ -1,54 +1,46 @@
 <?php
-require_once 'config.php';
+require_once 'db.php';
 
-// CRUD Operations for Storage Table
-// Create
 if (isset($_POST['action']) && $_POST['action'] == 'create') {
     try {
         $stmt = $pdo->prepare("INSERT INTO storage (name, location) VALUES (?, ?)");
         $stmt->execute([
-            $_POST['name'], 
-            $_POST['location'], 
-            // $_POST['capacity']
+            $_POST['name'],
+            $_POST['location'],
         ]);
         $message = "Storage added successfully!";
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         $error = "Error adding storage: " . $e->getMessage();
     }
 }
 
-// Update
 if (isset($_POST['action']) && $_POST['action'] == 'update') {
     try {
         $stmt = $pdo->prepare("UPDATE storage SET name = ?, location = ? WHERE id = ?");
         $stmt->execute([
-            $_POST['name'], 
-            $_POST['location'], 
-            // $_POST['capacity'], 
+            $_POST['name'],
+            $_POST['location'],
             $_POST['id']
         ]);
         $message = "Storage updated successfully!";
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         $error = "Error updating storage: " . $e->getMessage();
     }
 }
 
-// Delete
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
     try {
         $stmt = $pdo->prepare("DELETE FROM storage WHERE id = ?");
         $stmt->execute([$_GET['id']]);
         $message = "Storage deleted successfully!";
-    } catch(PDOException $e) {
+    } catch (PDOException $e) {
         $error = "Error deleting storage: " . $e->getMessage();
     }
 }
 
-// Read - Fetch Storage
 $stmt = $pdo->query("SELECT * FROM storage");
 $storages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Edit Mode
 $editStorage = null;
 if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     $stmt = $pdo->prepare("SELECT * FROM storage WHERE id = ?");
@@ -56,105 +48,73 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     $editStorage = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 ?>
-.message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-        .message.success { 
-            background-color: #dff0d8; 
-            color: #3c763d; 
-            border: 1px solid #d6e9c6;
-        }
-        .message.error { 
-            background-color: #f2dede; 
-            color: #a94442; 
-            border: 1px solid #ebccd1;
-        }
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Storage Management</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 8px; text-align: left; }
-        form { background: #f4f4f4; padding: 20px; margin-bottom: 20px; }
-        .message { color: green; }
-        .error { color: red; }
-        nav { margin-bottom: 20px; }
-        nav a { margin-right: 10px; text-decoration: none; color: blue; }
-    </style>
+    <title>Storage - Inventory Management</title>
 </head>
-<body>
-    <h1>Storage Management</h1>
 
-    <!-- Navigation -->
-    <nav>
-        <a href="index.php">Dashboard</a> |
-        <a href="inventory.php">Inventory</a> | 
-        <a href="vendor.php">Vendors</a> | 
-        <a href="storage.php">Storage</a>
-    </nav>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Storage Management</h1>
 
-    <!-- Display Messages -->
-    <?php if(isset($message)): ?>
-        <p class="message"><?= $message ?></p>
-    <?php endif; ?>
-    <?php if(isset($error)): ?>
-        <p class="error"><?= $error ?></p>
-    <?php endif; ?>
-
-    <!-- Create/Update Form -->
-    <form method="POST">
-        <input type="hidden" name="action" value="<?= $editStorage ? 'update' : 'create' ?>">
-        <?php if($editStorage): ?>
-            <input type="hidden" name="id" value="<?= $editStorage['id'] ?>">
+        <?php if (isset($message)): ?>
+            <p class="text-green-600 mb-4"><?= $message ?></p>
+        <?php endif; ?>
+        <?php if (isset($error)): ?>
+            <p class="text-red-600 mb-4"><?= $error ?></p>
         <?php endif; ?>
 
-        <input type="text" name="name" placeholder="Storage Name" 
-               value="<?= $editStorage ? $editStorage['name'] : '' ?>" required>
+        <form method="POST" class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <input type="hidden" name="action" value="<?= $editStorage ? 'update' : 'create' ?>">
+            <?php if ($editStorage): ?>
+                <input type="hidden" name="id" value="<?= $editStorage['id'] ?>">
+            <?php endif; ?>
 
-        <input type="text" name="location" placeholder="Location" 
-               value="<?= $editStorage ? $editStorage['location'] : '' ?>" required>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" name="name" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Storage Name"
+                    value="<?= $editStorage ? $editStorage['name'] : '' ?>" required>
 
-        <!-- <input type="number" name="capacity" placeholder="Capacity" 
-               value="<?= $editStorage ? $editStorage['capacity'] : '' ?>" required> -->
+                <input type="text" name="location" class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Location"
+                    value="<?= $editStorage ? $editStorage['location'] : '' ?>" required>
+            </div>
 
-        <button type="submit"><?= $editStorage ? 'Update' : 'Add' ?> Storage</button>
-        <?php if($editStorage): ?>
-            <a href="?">Cancel</a>
-        <?php endif; ?>
-    </form>
+            <div class="mt-4">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                    <?= $editStorage ? 'Update' : 'Add' ?> Storage
+                </button>
+                <?php if ($editStorage): ?>
+                    <a class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ml-2" href="?">Cancel</a>
+                <?php endif; ?>
+            </div>
+        </form>
 
-    <!-- Storage Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Capacity</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($storages as $storage): ?>
-            <tr>
-                <td><?= $storage['id'] ?></td>
-                <td><?= $storage['name'] ?></td>
-                <td><?= $storage['location'] ?></td>
-                <!-- <td><?= $storage['capacity'] ?></td> -->
-                <td>
-                    <a href="?action=edit&id=<?= $storage['id'] ?>">Edit</a>
-                    <a href="?action=delete&id=<?= $storage['id'] ?>" 
-                       onclick="return confirm('Are you sure you want to delete this storage?');">Delete</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="py-3 px-4 border-b text-left">#</th>
+                    <th class="py-3 px-4 border-b text-left">Name</th>
+                    <th class="py-3 px-4 border-b text-left">Location</th>
+                    <th class="py-3 px-4 border-b text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($storages as $index => $storage): ?>
+                    <tr class="hover:bg-gray-100 transition duration-200">
+                        <td class="py-3 px-4 border-b"><?= $index + 1 ?></td>
+                        <td class="py-3 px-4 border-b"><?= $storage['name'] ?></td>
+                        <td class="py-3 px-4 border-b"><?= $storage['location'] ?></td>
+                        <td class="py-3 px-4 border-b">
+                            <a class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-3 rounded-lg transition duration-300" href="?action=edit&id=<?= $storage['id'] ?>">Edit</a>
+                            <a class="bg-red-600 hover:bg-red-700 text-white font-semibold py-1 px-3 rounded-lg transition duration-300 ml-2" href="?action=delete&id=<?= $storage['id'] ?>" onclick="return confirm('Are you sure you want to delete this storage?');">Delete</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
+
 </html>
