@@ -1,5 +1,6 @@
 <?php
-require_once 'db.php';
+require_once 'db_connection.php';
+include 'layout.php';
 
 $itemsStmt = $pdo->query("SELECT items FROM vendor");
 $vendorItems = $itemsStmt->fetchAll(PDO::FETCH_COLUMN);
@@ -169,7 +170,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
             </thead>
             <tbody>
                 <?php foreach ($inventories as $index => $inventory): ?>
-                    <tr class="<?= $inventory['stock'] <= 0 ? 'bg-red-100' : 'hover:bg-gray-100' ?> transition duration-200">
+                    <tr class="<?= $inventory['stock'] <= 0 ? 'bg-red-300' : 'hover:bg-gray-100' ?> transition duration-200">
                         <td class="py-3 px-4 border-b"><?= $index + 1 ?></td>
                         <td class="py-3 px-4 border-b"><?= htmlspecialchars($inventory['items']) ?></td>
                         <td class="py-3 px-4 border-b"><?= htmlspecialchars($inventory['stock']) ?></td>

@@ -1,5 +1,6 @@
 <?php
-require_once 'db.php';
+require_once 'db_connection.php';
+include 'layout.php';
 
 if (isset($_POST['action']) && $_POST['action'] == 'create') {
     try {
